@@ -88,6 +88,13 @@ And then, you can use:
 * `STATES.CHOICES_CONST_DICT`, a dict to get value from constant name
 * `STTES.REVERTED_CHOICES_CONST_DICT`, a dict to get constant name from value
 
+You can check whether a value is in `STATES` directly::
+
+    def is_valid(self):
+        # it's an example, we could have test STATES.ONLINE
+        return self.state in STATES
+
+`not in` ? Yes, you can use `in` and even iterate on Choices objects !
 
 You can create subsets of choices within the sane variable::
 
@@ -99,14 +106,23 @@ You can create subsets of choices within the sane variable::
 
     STATES.add_subset('NOT_ONLINE', ('DRAFT', 'OFFILNE',))
 
-Now, `STATES.NOT_ONLINE` is a full `Choices` object, with a subset of the main STATES choices.
-You can use it in a filter::
+Now, `STATES.NOT_ONLINE` is a partial `Choices` object, with a subset of the main STATES choices.
+You can use it to generate choices for when you only want a subset of choices available::
+
+    offline_state = models.PositiveSmallIntegerField(choices=STATES.NOT_ONLINE, default=STATES.DRAFT)
+
+You also get:
+
+* `STATES.NOT_ONLINE_DICT`, a dict to get the value to display with the key used in database
+* `STATES.REVERTED_NOT_ONLINE_DICT`, a dict to get the key from the displayable value (can be useful in some case)
+* `STATES.NOT_ONLINE_CONST_DICT`, a dict to get value from constant name
+* `STTES.REVERTED_NOT_ONLINE_CONST_DICT`, a dict to get constant name from value
+
+If you want to check membership in subset you could do::
 
     def is_online(self):
         # it's an example, we could have test STATES.ONLINE
-        return self.state not in STATES.NOT_ONLINE
-
-`not in` ? Yes, you can use `in` and even iterate on Choices objects !
+        return self.state not in STATES.NOT_ONLINE_DICT
 
 -----
 Notes
